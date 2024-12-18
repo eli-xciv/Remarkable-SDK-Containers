@@ -40,6 +40,8 @@ RUN ./${RM_SDK_SCRIPT_NAME} -d /home/remarkable/sdk
 # Add the env Sourcing to the bashrc to ensure load
 RUN echo "source /home/remarkable/sdk/environment-setup-cortexa53-crypto-remarkable-linux" >> ~/.bashrc
 
+WORKDIR /home/remarkable/dev
+
 ENTRYPOINT ["/bin/bash"]
 
 

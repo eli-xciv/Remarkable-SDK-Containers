@@ -42,7 +42,7 @@ podman run -it \
 ```
 
 This should give you a `bash` shell within the container. 
-The container should also drop you to your softare directory.
+The container should also drop you to your software/development directory.
 
 You can then compile your software using the remarkable SDK.
 ```
