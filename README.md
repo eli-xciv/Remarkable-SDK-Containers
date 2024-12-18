@@ -2,7 +2,7 @@
 This repo house the source files for creating containers for the [Remarkable SDKs](https://developer.remarkable.com/documentation/sdk)
 
 ## Disclaimer
-- I am not associated with Remarkable AS in any way
+- I am not associated with `Remarkable AS` in any way
 - This packaging is provided as is with no guaruntees or warranties
 
 ## Inspiration
