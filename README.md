@@ -36,7 +36,9 @@ make build-remarkable-two-container
 Once your containers are built, you can run them and mount your development directory into the container using `-v` volume mount option. (If using podman ensure you add the `:z/Z` to the volume mount)
 
 ```bash
-podman run -it -v /path/to/software:/home/remarkable/dev:z docker.io/eli-xciv/remarkable-sdk:3.15.4.2-ferrari
+podman run -it \
+    -v /path/to/software:/home/remarkable/dev:z \
+    docker.io/eli-xciv/remarkable-sdk:3.15.4.2-ferrari
 ```
 
 This should give you a `bash` shell within the container. 
