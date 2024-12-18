@@ -1,9 +1,12 @@
 # Remarkable-SDK-Containers
-This repo houses the source files for creating containers that house the [Remarkable SDKs](https://developer.remarkable.com/documentation/sdk)
+This repo house the source files for creating containers for the [Remarkable SDKs](https://developer.remarkable.com/documentation/sdk)
 
 ## Disclaimer
 - I am not associated with Remarkable AS in any way
 - This packaging is provided as is with no guaruntees or warranties
+
+## Inspiration
+I wanted to test out some Remarkable development, but did not want to really install the SDK on my system, so I decided to containerize it.
 
 ## Background
 Remarkable gives their products code names as stated on their [website](https://developer.remarkable.com/links)
