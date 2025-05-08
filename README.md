@@ -29,7 +29,7 @@ make build-remarkable-two-container
 ```
 ### Remarkable 1
 ```bash
-make build-remarkable-two-container
+make build-remarkable-one-container
 ```
 
 ## Using
