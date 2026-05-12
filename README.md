@@ -10,6 +10,7 @@ I wanted to test out some Remarkable development, but did not want to really ins
 
 ## Background
 Remarkable gives their products code names as stated on their [website](https://developer.remarkable.com/links)
+- Remarkable Paper Pro Move -> chiappa
 - Remarkable Paper Pro -> ferrari
 - Remarkable 2 -> rm2
 - Remarkable 1 -> rm1
@@ -17,16 +18,22 @@ Remarkable gives their products code names as stated on their [website](https://
 This project uses the Remarkable codename when generating the containers
 
 ## Building
-### Remarkable Paper Pro
+### Remarkable Paper Pro (ferrari)
 Execute the following
-```bash 
+```bash
 make
+```
+
+### Remarkable Paper Pro Move (chiappa)
+```bash
+make build-remarkable-paper-pro-move-container
 ```
 
 ### Remarkable 2
 ```bash
 make build-remarkable-two-container
 ```
+
 ### Remarkable 1
 ```bash
 make build-remarkable-one-container
@@ -38,7 +45,7 @@ Once your containers are built, you can run them and mount your development dire
 ```bash
 podman run -it \
     -v /path/to/software:/home/remarkable/dev:z \
-    docker.io/eli-xciv/remarkable-sdk:3.18.2.3-ferrari
+    docker.io/eli-xciv/remarkable-sdk:3.26.0.68-ferrari
 ```
 
 This should give you a `bash` shell within the container. 
