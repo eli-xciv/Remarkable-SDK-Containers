@@ -3,7 +3,7 @@ This repo house the source files for creating containers for the [Remarkable SDK
 
 ## Disclaimer
 - I am not associated with `Remarkable AS` in any way
-- This packaging is provided as is with no guaruntees or warranties
+- This packaging is provided as is with no guarantees or warranties
 
 ## Inspiration
 I wanted to test out some Remarkable development, but did not want to really install the SDK on my system, so I decided to containerize it.
@@ -29,7 +29,7 @@ make build-remarkable-two-container
 ```
 ### Remarkable 1
 ```bash
-make build-remarkable-two-container
+make build-remarkable-one-container
 ```
 
 ## Using
@@ -38,7 +38,7 @@ Once your containers are built, you can run them and mount your development dire
 ```bash
 podman run -it \
     -v /path/to/software:/home/remarkable/dev:z \
-    docker.io/eli-xciv/remarkable-sdk:3.15.4.2-ferrari
+    docker.io/eli-xciv/remarkable-sdk:3.18.2.3-ferrari
 ```
 
 This should give you a `bash` shell within the container. 
