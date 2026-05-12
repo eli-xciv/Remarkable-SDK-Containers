@@ -1,57 +1,83 @@
-# Remarkable-SDK-Containers
-This repo house the source files for creating containers for the [Remarkable SDKs](https://developer.remarkable.com/documentation/sdk)
+# Remarkable SDK Containers
 
-## Disclaimer
-- I am not associated with `Remarkable AS` in any way
-- This packaging is provided as is with no guarantees or warranties
+Podman/Docker container images that package the [reMarkable cross-compilation SDKs](https://developer.remarkable.com/documentation/sdk), so you can build software for reMarkable devices without installing the SDK on your host system.
 
-## Inspiration
-I wanted to test out some Remarkable development, but did not want to really install the SDK on my system, so I decided to containerize it.
+> **Disclaimer:** This project is not affiliated with reMarkable AS. Provided as-is with no guarantees or warranties.
 
-## Background
-Remarkable gives their products code names as stated on their [website](https://developer.remarkable.com/links)
-- Remarkable Paper Pro Move -> chiappa
-- Remarkable Paper Pro -> ferrari
-- Remarkable 2 -> rm2
-- Remarkable 1 -> rm1
+---
 
-This project uses the Remarkable codename when generating the containers
+## Supported Devices
+
+reMarkable uses internal codenames for each device. This project uses those codenames as image tags.
+
+| Device | Codename | Current OS Version |
+|---|---|---|
+| reMarkable Paper Pro Move | `chiappa` | 3.26.0.68 |
+| reMarkable Paper Pro | `ferrari` | 3.26.0.68 |
+| reMarkable 2 | `rm2` | 3.26.0.68 |
+| reMarkable 1 | `rm1` | 3.26.0.68 |
+
+---
+
+## Prerequisites
+
+- [Podman](https://podman.io/) or Docker
+- `make`
+
+---
 
 ## Building
-### Remarkable Paper Pro (ferrari)
-Execute the following
+
+Build the image for your target device. The default target builds for the reMarkable Paper Pro (ferrari).
+
 ```bash
+# reMarkable Paper Pro (default)
 make
-```
 
-### Remarkable Paper Pro Move (chiappa)
-```bash
+# reMarkable Paper Pro Move
 make build-remarkable-paper-pro-move-container
-```
 
-### Remarkable 2
-```bash
+# reMarkable 2
 make build-remarkable-two-container
+
+# reMarkable 1
+make build-remarkable-one-container
+
+# All devices
+make all
 ```
 
-### Remarkable 1
-```bash
-make build-remarkable-one-container
-```
+---
 
 ## Using
-Once your containers are built, you can run them and mount your development directory into the container using `-v` volume mount option. (If using podman ensure you add the `:z/Z` to the volume mount)
+
+Run the container and mount your project directory into `/home/remarkable/dev`:
 
 ```bash
 podman run -it \
-    -v /path/to/software:/home/remarkable/dev:z \
+    -v /path/to/your/project:/home/remarkable/dev:z \
     docker.io/eli-xciv/remarkable-sdk:3.26.0.68-ferrari
 ```
 
-This should give you a `bash` shell within the container. 
-The container should also drop you to your software/development directory.
+> **Podman users:** Always include `:z` or `:Z` on volume mounts for SELinux compatibility.
 
-You can then compile your software using the remarkable SDK.
-```
+This drops you into a `bash` shell in your project directory with the reMarkable cross-compiler on `$PATH`. Use the `$CC` environment variable to invoke it:
+
+```bash
 $CC helloworld.c -o helloworld
 ```
+
+The resulting binary is compiled for the target ARM architecture and ready to transfer to your reMarkable device.
+
+---
+
+## How It Works
+
+The `Dockerfile` uses a Fedora 40 base image and:
+1. Installs the Yocto build dependencies
+2. Downloads the official reMarkable toolchain script from Google Cloud Storage
+3. Installs the SDK into `/home/remarkable/sdk`
+4. Sources the SDK environment in `.bashrc` so the cross-compiler is available on every shell start
+
+SDK scripts and OS versions are defined per-device in the `Makefile` and sourced from:
+`https://storage.googleapis.com/remarkable-codex-toolchain`
