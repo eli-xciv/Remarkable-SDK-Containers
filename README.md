@@ -1,37 +1,32 @@
-# Remarkable SDK Containers
+# reMarkable SDK Containers
 
-Podman/Docker container images that package the [reMarkable cross-compilation SDKs](https://developer.remarkable.com/documentation/sdk), so you can build software for reMarkable devices without installing the SDK on your host system.
+> Cross-compile for any reMarkable device — no native SDK install required.
 
-> **Disclaimer:** This project is not affiliated with reMarkable AS. Provided as-is with no guarantees or warranties.
+Containerized [reMarkable cross-compilation toolchains](https://developer.remarkable.com/documentation/sdk) built on Fedora 40. Mount your project, run `$CC`, get an ARM binary ready for your device.
+
+> **Disclaimer:** Not affiliated with reMarkable AS. Provided as-is with no guarantees or warranties.
 
 ---
 
 ## Supported Devices
 
-reMarkable uses internal codenames for each device. This project uses those codenames as image tags.
+reMarkable uses internal codenames for each product. Images are tagged by codename and OS version.
 
-| Device | Codename | Current OS Version |
-|---|---|---|
-| reMarkable Paper Pro Move | `chiappa` | 3.26.0.68 |
-| reMarkable Paper Pro | `ferrari` | 3.26.0.68 |
-| reMarkable 2 | `rm2` | 3.26.0.68 |
-| reMarkable 1 | `rm1` | 3.26.0.68 |
-
----
-
-## Prerequisites
-
-- [Podman](https://podman.io/) or Docker
-- `make`
+| Device | Codename | OS Version | Toolchain |
+|---|---|---|---|
+| reMarkable Paper Pro Move | `chiappa` | 3.26.0.68 | 5.6.75 |
+| reMarkable Paper Pro | `ferrari` | 3.26.0.68 | 5.6.75 |
+| reMarkable 2 | `rm2` | 3.26.0.68 | 5.6.75 |
+| reMarkable 1 | `rm1` | 3.26.0.68 | 5.6.75 |
 
 ---
 
-## Building
+## Quick Start
 
-Build the image for your target device. The default target builds for the reMarkable Paper Pro (ferrari).
+### 1. Build the image for your device
 
 ```bash
-# reMarkable Paper Pro (default)
+# reMarkable Paper Pro — default
 make
 
 # reMarkable Paper Pro Move
@@ -47,11 +42,9 @@ make build-remarkable-one-container
 make all
 ```
 
----
+### 2. Run the container and compile
 
-## Using
-
-Run the container and mount your project directory into `/home/remarkable/dev`:
+Mount your project directory and start the shell:
 
 ```bash
 podman run -it \
@@ -59,25 +52,75 @@ podman run -it \
     docker.io/eli-xciv/remarkable-sdk:3.26.0.68-ferrari
 ```
 
-> **Podman users:** Always include `:z` or `:Z` on volume mounts for SELinux compatibility.
-
-This drops you into a `bash` shell in your project directory with the reMarkable cross-compiler on `$PATH`. Use the `$CC` environment variable to invoke it:
+Inside the container, use the `$CC` environment variable to invoke the cross-compiler:
 
 ```bash
 $CC helloworld.c -o helloworld
 ```
 
-The resulting binary is compiled for the target ARM architecture and ready to transfer to your reMarkable device.
+The output binary is compiled for ARM and ready to copy to your reMarkable device.
+
+> **Podman + SELinux:** Always append `:z` (shared) or `:Z` (private) to volume mounts to avoid permission errors.
+
+---
+
+## Image Tags
+
+Images follow the `<os-version>-<codename>` convention:
+
+| Image Tag | Device |
+|---|---|
+| `3.26.0.68-chiappa` | reMarkable Paper Pro Move |
+| `3.26.0.68-ferrari` | reMarkable Paper Pro |
+| `3.26.0.68-rm2` | reMarkable 2 |
+| `3.26.0.68-rm1` | reMarkable 1 |
+
+---
+
+## Prerequisites
+
+- [Podman](https://podman.io/) or Docker
+- `make`
 
 ---
 
 ## How It Works
 
-The `Dockerfile` uses a Fedora 40 base image and:
-1. Installs the Yocto build dependencies
-2. Downloads the official reMarkable toolchain script from Google Cloud Storage
-3. Installs the SDK into `/home/remarkable/sdk`
-4. Sources the SDK environment in `.bashrc` so the cross-compiler is available on every shell start
+The `Dockerfile` accepts three build arguments — SDK base URL, OS version, and toolchain script name — and performs the following steps:
 
-SDK scripts and OS versions are defined per-device in the `Makefile` and sourced from:
-`https://storage.googleapis.com/remarkable-codex-toolchain`
+1. Installs Yocto build dependencies on a Fedora 40 base image
+2. Downloads the official reMarkable toolchain installer from Google Cloud Storage
+3. Runs the installer into `/home/remarkable/sdk`
+4. Sources the SDK environment in `.bashrc` so `$CC`, `$CXX`, and related tools are available in every shell session
+5. Sets the working directory to `/home/remarkable/dev`, where your project is mounted
+
+The `Makefile` defines per-device OS versions, toolchain script names, and SDK environment filenames, passing them as `--build-arg` flags at build time.
+
+---
+
+## SDK Source
+
+Toolchain scripts are fetched directly from reMarkable's official distribution:
+
+```
+https://storage.googleapis.com/remarkable-codex-toolchain/<os-version>/<script>.sh
+```
+
+For the full list of available releases and devices, see the [reMarkable developer links page](https://developer.remarkable.com/links).
+
+---
+
+## Updating SDK Versions
+
+When reMarkable releases a new OS version:
+
+1. Check [developer.remarkable.com/links](https://developer.remarkable.com/links) for the new OS version and toolchain script names
+2. Update the version and script name variables for each device in `Makefile`
+3. Verify the `RM_*_ENV_SETUP` filename matches what the SDK installer actually generates — check the TODO comments in `Makefile` for RM1, RM2, and chiappa
+4. Rebuild and re-tag
+
+---
+
+## Contributing
+
+Pull requests are welcome. The project is intentionally minimal — one `Dockerfile`, one `Makefile`, all devices.
