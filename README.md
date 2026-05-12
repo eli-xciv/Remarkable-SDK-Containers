@@ -47,9 +47,7 @@ make all
 Mount your project directory and start the shell:
 
 ```bash
-podman run -it \
-    -v /path/to/your/project:/home/remarkable/dev:z \
-    docker.io/eli-xciv/remarkable-sdk:3.26.0.68-ferrari
+make build-remarkable-one-container
 ```
 
 Inside the container, use the `$CC` environment variable to invoke the cross-compiler:
